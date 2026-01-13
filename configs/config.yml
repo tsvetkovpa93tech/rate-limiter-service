@@ -1,0 +1,21 @@
+server:
+  port: 8080
+  read_timeout: 15s
+  write_timeout: 15s
+  idle_timeout: 60s
+
+storage:
+  type: memory  # memory or redis
+  redis_address: localhost:6379
+  redis_db: 0
+  redis_password: ""
+
+limiter:
+  default_algorithm: token_bucket  # token_bucket or sliding_window
+  default_limit: 100
+  default_window: 1m  # 1 minute
+
+cors:
+  allowed_origins:
+    - "*"  # Allow all origins, or specify: ["http://localhost:3000", "https://example.com"]
+

@@ -1,0 +1,186 @@
+openapi: 3.0.3
+info:
+  title: Rate Limiter Service API
+  description: |
+    A production-ready rate limiting service with support for multiple algorithms
+    (Token Bucket and Sliding Window Log) and storage backends (In-Memory and Redis).
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: Rate Limiting
+    description: Rate limiting operations
+  - name: Health
+    description: Health check endpoints
+  - name: Metrics
+    description: Prometheus metrics
+
+paths:
+  /api/v1/limit-check:
+    post:
+      tags:
+        - Rate Limiting
+      summary: Check rate limit
+      description: |
+        Checks if a request should be allowed based on rate limiting rules.
+        Returns 200 if allowed, 429 if rate limit is exceeded.
+      operationId: checkLimit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckLimitRequest'
+            examples:
+              tokenBucket:
+                summary: Token Bucket example
+                value:
+                  key: "user:123"
+                  algorithm: "token_bucket"
+                  limit: 100
+                  window: "1m"
+              slidingWindow:
+                summary: Sliding Window example
+                value:
+                  key: "user:456"
+                  algorithm: "sliding_window"
+                  limit: 50
+                  window: "30s"
+      responses:
+        '200':
+          description: Request is allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckLimitResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckLimitResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Returns the health status of the service
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /metrics:
+    get:
+      tags:
+        - Metrics
+      summary: Prometheus metrics
+      description: Returns Prometheus metrics in text format
+      operationId: getMetrics
+      responses:
+        '200':
+          description: Metrics in Prometheus format
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  schemas:
+    CheckLimitRequest:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+          description: Unique identifier for rate limiting (e.g., user ID, IP address)
+          example: "user:123"
+        algorithm:
+          type: string
+          enum: [token_bucket, sliding_window]
+          description: Rate limiting algorithm to use
+          default: token_bucket
+        limit:
+          type: integer
+          minimum: 1
+          description: Maximum number of requests allowed in the time window
+          default: 100
+        window:
+          type: string
+          pattern: '^\d+[smhd]$'
+          description: Time window for rate limiting (e.g., "1m", "30s", "1h")
+          default: "1m"
+      example:
+        key: "user:123"
+        algorithm: "token_bucket"
+        limit: 100
+        window: "1m"
+
+    CheckLimitResponse:
+      type: object
+      properties:
+        allowed:
+          type: boolean
+          description: Whether the request is allowed
+        reset_at:
+          type: integer
+          format: int64
+          description: Unix timestamp when the rate limit will reset
+        message:
+          type: string
+          description: Optional message (usually present when allowed is false)
+      example:
+        allowed: true
+        reset_at: 1704067200
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "ok"
+        service:
+          type: string
+          example: "rate-limiter-service"
+        version:
+          type: string
+          example: "1.0.0"
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      example:
+        error: "Invalid request body"
+
