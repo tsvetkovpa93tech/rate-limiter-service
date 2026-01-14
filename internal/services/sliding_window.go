@@ -40,7 +40,7 @@ func NewSlidingWindowLimiter(
 
 // slidingWindowState represents the state of a sliding window
 type slidingWindowState struct {
-	Timestamps []int64 `json:"timestamps"` // Unix timestamps
+	Timestamps []int64 `json:"timestamps"` // Unix timestamps in nanoseconds
 }
 
 // Allow checks if a request should be allowed using Sliding Window Log algorithm
@@ -54,8 +54,8 @@ func (s *SlidingWindowLimiter) Allow(ctx context.Context, key string) (bool, err
 	}
 
 	now := time.Now()
-	nowUnix := now.Unix()
-	windowStart := now.Add(-s.window).Unix()
+	nowUnixNano := now.UnixNano()
+	windowStart := now.Add(-s.window).UnixNano()
 
 	// Get current state
 	stateData, err := s.storage.Get(ctx, key)
@@ -94,10 +94,11 @@ func (s *SlidingWindowLimiter) Allow(ctx context.Context, key string) (bool, err
 		}
 	}
 
-	// Remove timestamps outside the window
+	// Remove timestamps outside the window.
+	// We keep all timestamps that are within [windowStart, now] inclusive.
 	validTimestamps := make([]int64, 0, len(state.Timestamps))
 	for _, ts := range state.Timestamps {
-		if ts > windowStart {
+		if ts >= windowStart {
 			validTimestamps = append(validTimestamps, ts)
 		}
 	}
@@ -107,7 +108,7 @@ func (s *SlidingWindowLimiter) Allow(ctx context.Context, key string) (bool, err
 	if len(state.Timestamps) >= s.limit {
 		// Save state even if request is denied
 		stateJSON, _ := json.Marshal(state)
-		expiration := nowUnix + int64(s.window.Seconds())
+		expiration := now.Add(s.window).Unix()
 		if err := s.storage.Set(ctx, key, string(stateJSON), expiration); err != nil {
 			s.logger.Error("Failed to save window state", "key", key, "error", err)
 			return false, fmt.Errorf("failed to save window state: %w", err)
@@ -121,9 +122,9 @@ func (s *SlidingWindowLimiter) Allow(ctx context.Context, key string) (bool, err
 	}
 
 	// Add current timestamp
-	state.Timestamps = append(state.Timestamps, nowUnix)
+	state.Timestamps = append(state.Timestamps, nowUnixNano)
 	stateJSON, _ := json.Marshal(state)
-	expiration := nowUnix + int64(s.window.Seconds())
+	expiration := now.Add(s.window).Unix()
 	if err := s.storage.Set(ctx, key, string(stateJSON), expiration); err != nil {
 		s.logger.Error("Failed to save window state", "key", key, "error", err)
 		return false, fmt.Errorf("failed to save window state: %w", err)

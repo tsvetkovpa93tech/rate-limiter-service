@@ -41,7 +41,7 @@ func NewTokenBucketLimiter(
 // tokenBucketState represents the state of a token bucket
 type tokenBucketState struct {
 	Tokens     int   `json:"tokens"`
-	LastRefill int64 `json:"last_refill"` // Unix timestamp
+	LastRefill int64 `json:"last_refill"` // Unix timestamp in nanoseconds
 }
 
 // Allow checks if a request should be allowed using Token Bucket algorithm
@@ -54,7 +54,7 @@ func (t *TokenBucketLimiter) Allow(ctx context.Context, key string) (bool, error
 	default:
 	}
 
-	now := time.Now().Unix()
+	now := time.Now()
 	refillRate := float64(t.limit) / t.window.Seconds()
 
 	// Get current state
@@ -69,7 +69,7 @@ func (t *TokenBucketLimiter) Allow(ctx context.Context, key string) (bool, error
 		// Initialize bucket with full tokens
 		state = tokenBucketState{
 			Tokens:     t.limit,
-			LastRefill: now,
+			LastRefill: now.UnixNano(),
 		}
 		t.logger.Debug("Initialized new token bucket", "key", key, "tokens", t.limit)
 	} else {
@@ -92,17 +92,17 @@ func (t *TokenBucketLimiter) Allow(ctx context.Context, key string) (bool, error
 			t.logger.Warn("Failed to unmarshal state, resetting bucket", "key", key, "error", err)
 			state = tokenBucketState{
 				Tokens:     t.limit,
-				LastRefill: now,
+				LastRefill: now.UnixNano(),
 			}
 		} else {
 			// Refill tokens based on time elapsed since last refill/emptying
-			elapsedSeconds := float64(now-state.LastRefill)
+			elapsedSeconds := float64(now.UnixNano()-state.LastRefill) / float64(time.Second)
 			if elapsedSeconds > 0 {
 				tokensToAdd := int(elapsedSeconds * refillRate)
 				if tokensToAdd > 0 {
 					oldTokens := state.Tokens
 					state.Tokens = min(state.Tokens+tokensToAdd, t.limit)
-					state.LastRefill = now
+					state.LastRefill = now.UnixNano()
 					t.logger.Debug("Tokens refilled",
 						"key", key,
 						"old_tokens", oldTokens,
@@ -118,7 +118,7 @@ func (t *TokenBucketLimiter) Allow(ctx context.Context, key string) (bool, error
 	if state.Tokens <= 0 {
 		// Save state even if request is denied
 		stateJSON, _ := json.Marshal(state)
-		expiration := now + int64(t.window.Seconds())
+		expiration := now.Add(t.window).Unix()
 		if err := t.storage.Set(ctx, key, string(stateJSON), expiration); err != nil {
 			t.logger.Error("Failed to save bucket state", "key", key, "error", err)
 			return false, fmt.Errorf("failed to save bucket state: %w", err)
@@ -133,10 +133,10 @@ func (t *TokenBucketLimiter) Allow(ctx context.Context, key string) (bool, error
 	// to the moment of emptying so that new tokens start accumulating
 	// from this time, not from the initial creation time.
 	if state.Tokens == 0 {
-		state.LastRefill = now
+		state.LastRefill = now.UnixNano()
 	}
 	stateJSON, _ := json.Marshal(state)
-	expiration := now + int64(t.window.Seconds())
+	expiration := now.Add(t.window).Unix()
 	if err := t.storage.Set(ctx, key, string(stateJSON), expiration); err != nil {
 		t.logger.Error("Failed to save bucket state", "key", key, "error", err)
 		return false, fmt.Errorf("failed to save bucket state: %w", err)
