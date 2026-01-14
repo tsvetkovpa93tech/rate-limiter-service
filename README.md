@@ -213,7 +213,7 @@ Distributed storage using Redis. Suitable for multi-instance deployments and pro
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/rate-limiter-service.git
+git clone https://github.com/tsvetkovpa93tech/rate-limiter-service.git
 cd rate-limiter-service
 ```
 

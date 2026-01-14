@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
 )
 
 func BenchmarkTokenBucket_Allow(b *testing.B) {
@@ -73,4 +73,3 @@ func BenchmarkSlidingWindow_Allow_DifferentKeys(b *testing.B) {
 		}
 	})
 }
-

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/pkg/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/storage"
 )
 
 // TokenBucketLimiter implements the Token Bucket algorithm
@@ -69,7 +69,7 @@ func (t *TokenBucketLimiter) Allow(key string) (bool, error) {
 				LastRefill: now,
 			}
 		} else {
-			// Refill tokens based on time elapsed
+			// Refill tokens based on time elapsed since last refill/emptying
 			elapsed := now - state.LastRefill
 			if elapsed > 0 {
 				tokensToAdd := int(float64(elapsed) * refillRate)
@@ -92,6 +92,12 @@ func (t *TokenBucketLimiter) Allow(key string) (bool, error) {
 
 	// Consume a token
 	state.Tokens--
+	// When the bucket becomes empty, move the refill reference point
+	// to the moment of emptying so that new tokens start accumulating
+	// from this time, not from the initial creation time.
+	if state.Tokens == 0 {
+		state.LastRefill = now
+	}
 	stateJSON, _ := json.Marshal(state)
 	expiration := now + int64(t.window.Seconds())
 	if err := t.storage.Set(key, string(stateJSON), expiration); err != nil {

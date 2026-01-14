@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This document provides guidelines a
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/yourusername/rate-limiter-service.git`
+2. Clone your fork: `git clone https://github.com/tsvetkovpa93tech/rate-limiter-service.git`
 3. Create a branch: `git checkout -b feature/your-feature-name`
 4. Make your changes
 5. Test your changes: `go test ./...`

@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-chi/render"
 	"log/slog"
 
-	"github.com/yourusername/rate-limiter-service/internal/service"
+	"github.com/go-chi/render"
+
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/service"
 )
 
 // LimitHandler handles rate limiting requests
@@ -81,4 +82,3 @@ func (h *LimitHandler) CheckLimit(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, statusCode)
 	render.JSON(w, r, response)
 }
-

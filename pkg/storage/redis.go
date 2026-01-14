@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 
-	"github.com/yourusername/rate-limiter-service/internal/config"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/config"
 )
 
 // RedisStorage implements Redis storage for distributed rate limiting
@@ -94,4 +94,3 @@ func (r *RedisStorage) Delete(key string) error {
 func (r *RedisStorage) Close() error {
 	return r.client.Close()
 }
-

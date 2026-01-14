@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/yourusername/rate-limiter-service/internal/metrics"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/metrics"
 )
 
 // MetricsHandler handles metrics requests
@@ -22,4 +22,3 @@ func NewMetricsHandler(collector *metrics.Collector) *MetricsHandler {
 func (h *MetricsHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	h.collector.Handler().ServeHTTP(w, r)
 }
-

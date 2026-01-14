@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/internal/storage"
-	"github.com/yourusername/rate-limiter-service/pkg/interfaces"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/interfaces"
 )
 
 // TokenBucketLimiter implements the Token Bucket algorithm
@@ -95,9 +95,8 @@ func (t *TokenBucketLimiter) Allow(ctx context.Context, key string) (bool, error
 				LastRefill: now,
 			}
 		} else {
-			// Refill tokens based on time elapsed
-			lastRefillTime := time.Unix(state.LastRefill, 0)
-			elapsedSeconds := time.Since(lastRefillTime).Seconds()
+			// Refill tokens based on time elapsed since last refill/emptying
+			elapsedSeconds := float64(now-state.LastRefill)
 			if elapsedSeconds > 0 {
 				tokensToAdd := int(elapsedSeconds * refillRate)
 				if tokensToAdd > 0 {
@@ -130,6 +129,12 @@ func (t *TokenBucketLimiter) Allow(ctx context.Context, key string) (bool, error
 
 	// Consume a token
 	state.Tokens--
+	// When the bucket becomes empty, move the refill reference point
+	// to the moment of emptying so that new tokens start accumulating
+	// from this time, not from the initial creation time.
+	if state.Tokens == 0 {
+		state.LastRefill = now
+	}
 	stateJSON, _ := json.Marshal(state)
 	expiration := now + int64(t.window.Seconds())
 	if err := t.storage.Set(ctx, key, string(stateJSON), expiration); err != nil {
@@ -151,4 +156,3 @@ func min(a, b int) int {
 
 // Ensure TokenBucketLimiter implements interfaces.RateLimiter
 var _ interfaces.RateLimiter = (*TokenBucketLimiter)(nil)
-

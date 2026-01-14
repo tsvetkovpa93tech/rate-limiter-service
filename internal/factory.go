@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/internal/services"
-	"github.com/yourusername/rate-limiter-service/internal/storage"
-	"github.com/yourusername/rate-limiter-service/pkg/interfaces"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/services"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/interfaces"
 )
 
 // AlgorithmType represents the type of rate limiting algorithm
@@ -62,4 +62,3 @@ func NewRateLimiter(config LimiterConfig) (interfaces.RateLimiter, error) {
 		return nil, fmt.Errorf("unsupported algorithm: %s", config.Algorithm)
 	}
 }
-

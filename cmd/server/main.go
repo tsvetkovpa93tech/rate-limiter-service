@@ -14,12 +14,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/yourusername/rate-limiter-service/pkg/config"
-	"github.com/yourusername/rate-limiter-service/internal/handlers"
-	appmw "github.com/yourusername/rate-limiter-service/internal/middleware"
-	"github.com/yourusername/rate-limiter-service/internal/metrics"
-	"github.com/yourusername/rate-limiter-service/internal/service"
-	"github.com/yourusername/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/handlers"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/metrics"
+	appmw "github.com/tsvetkovpa93tech/rate-limiter-service/internal/middleware"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/service"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/config"
 )
 
 func main() {
@@ -145,4 +145,3 @@ func main() {
 
 	logger.Info("Server exited")
 }
-

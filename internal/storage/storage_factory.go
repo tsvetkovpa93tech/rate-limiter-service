@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/yourusername/rate-limiter-service/pkg/config"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/config"
 )
 
 // NewStorage creates a new storage instance based on the storage type
@@ -22,4 +22,3 @@ func NewStorage(storageType string, cfg config.StorageConfig, logger *slog.Logge
 		return nil, fmt.Errorf("unsupported storage type: %s", storageType)
 	}
 }
-

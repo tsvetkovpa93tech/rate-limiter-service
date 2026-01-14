@@ -27,8 +27,8 @@ import (
     "time"
     "log/slog"
     
-    "github.com/yourusername/rate-limiter-service/internal"
-    "github.com/yourusername/rate-limiter-service/internal/storage"
+    "github.com/tsvetkovpa93tech/rate-limiter-service/internal"
+    "github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
 )
 
 // Создание хранилища

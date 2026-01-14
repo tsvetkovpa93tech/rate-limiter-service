@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/yourusername/rate-limiter-service/internal/config"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/config"
 )
 
 // Storage defines the interface for rate limiter storage
@@ -29,4 +29,3 @@ func NewStorage(storageType string, cfg config.StorageConfig) (Storage, error) {
 		return nil, fmt.Errorf("unsupported storage type: %s", storageType)
 	}
 }
-

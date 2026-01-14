@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 
-	"github.com/yourusername/rate-limiter-service/pkg/config"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/config"
 )
 
 // RedisStorage implements Redis storage for distributed rate limiting
@@ -38,13 +38,13 @@ func NewRedisStorage(cfg config.StorageConfig, logger *slog.Logger) (*RedisStora
 		Addr:         cfg.RedisAddress,
 		Password:     cfg.RedisPassword,
 		DB:           cfg.RedisDB,
-		PoolSize:     poolSize,              // Connection pool size
-		MinIdleConns: minIdle,               // Minimum idle connections
-		MaxRetries:   3,                     // Retry failed commands
-		DialTimeout:  5 * time.Second,      // Connection timeout
-		ReadTimeout:  3 * time.Second,      // Read timeout
-		WriteTimeout: 3 * time.Second,      // Write timeout
-		PoolTimeout:  4 * time.Second,      // Pool timeout
+		PoolSize:     poolSize,        // Connection pool size
+		MinIdleConns: minIdle,         // Minimum idle connections
+		MaxRetries:   3,               // Retry failed commands
+		DialTimeout:  5 * time.Second, // Connection timeout
+		ReadTimeout:  3 * time.Second, // Read timeout
+		WriteTimeout: 3 * time.Second, // Write timeout
+		PoolTimeout:  4 * time.Second, // Pool timeout
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -139,4 +139,3 @@ func (r *RedisStorage) Close() error {
 	r.logger.Info("Redis connection closed")
 	return nil
 }
-

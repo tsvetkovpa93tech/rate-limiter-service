@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/internal/storage"
-	"github.com/yourusername/rate-limiter-service/pkg/interfaces"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/interfaces"
 )
 
 // SlidingWindowLimiter implements the Sliding Window Log algorithm
@@ -139,4 +139,3 @@ func (s *SlidingWindowLimiter) Allow(ctx context.Context, key string) (bool, err
 
 // Ensure SlidingWindowLimiter implements interfaces.RateLimiter
 var _ interfaces.RateLimiter = (*SlidingWindowLimiter)(nil)
-

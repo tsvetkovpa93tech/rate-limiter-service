@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
 )
 
 func TestNewRateLimiter_TokenBucket(t *testing.T) {
@@ -138,4 +138,3 @@ func TestNewRateLimiter_NilStorage(t *testing.T) {
 		t.Error("Expected error for nil storage")
 	}
 }
-

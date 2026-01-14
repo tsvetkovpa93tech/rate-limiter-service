@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/internal"
-	"github.com/yourusername/rate-limiter-service/pkg/config"
-	"github.com/yourusername/rate-limiter-service/internal/metrics"
-	"github.com/yourusername/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/metrics"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/config"
 )
 
 // RateLimiterService handles rate limiting logic
@@ -132,4 +132,3 @@ func (s *RateLimiterService) CheckLimit(ctx context.Context, req *CheckLimitRequ
 
 	return response, nil
 }
-

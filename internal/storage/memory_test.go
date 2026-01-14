@@ -54,7 +54,9 @@ func TestMemoryStorage_Expiration(t *testing.T) {
 
 	key := "expiring-key"
 	value := "expiring-value"
-	expiration := time.Now().Add(100 * time.Millisecond).Unix()
+	// Expiration is stored as Unix timestamp in seconds, so we use
+	// second-level precision in the test to avoid flakiness.
+	expiration := time.Now().Add(1 * time.Second).Unix()
 
 	// Set with expiration
 	err := storage.Set(ctx, key, value, expiration)
@@ -62,7 +64,7 @@ func TestMemoryStorage_Expiration(t *testing.T) {
 		t.Fatalf("Set failed: %v", err)
 	}
 
-	// Get before expiration
+	// Get before expiration (immediately after Set)
 	result, err := storage.Get(ctx, key)
 	if err != nil {
 		t.Fatalf("Get failed: %v", err)
@@ -71,8 +73,8 @@ func TestMemoryStorage_Expiration(t *testing.T) {
 		t.Errorf("Expected %v, got %v", value, result)
 	}
 
-	// Wait for expiration
-	time.Sleep(150 * time.Millisecond)
+	// Wait for expiration (slightly more than 1 second)
+	time.Sleep(1100 * time.Millisecond)
 
 	// Get after expiration
 	result, err = storage.Get(ctx, key)

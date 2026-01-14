@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/internal/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/storage"
 )
 
 func TestSlidingWindowLimiter_Allow(t *testing.T) {
@@ -138,4 +138,3 @@ func TestSlidingWindowLimiter_DifferentKeys(t *testing.T) {
 		t.Error("Request should be allowed for key2")
 	}
 }
-

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/pkg/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/storage"
 )
 
 // SlidingWindowLimiter implements the Sliding Window Log algorithm
@@ -100,4 +100,3 @@ func (s *SlidingWindowLimiter) Allow(key string) (bool, error) {
 func (s *SlidingWindowLimiter) Reset(key string) error {
 	return s.storage.Delete(key)
 }
-

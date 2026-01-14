@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/render"
 
-	"github.com/yourusername/rate-limiter-service/internal/service"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/internal/service"
 )
 
 // RateLimiterHandler handles HTTP requests for rate limiting
@@ -57,8 +57,7 @@ func (h *RateLimiterHandler) CheckLimit(w http.ResponseWriter, r *http.Request) 
 // HealthCheck handles GET /health
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, map[string]string{
-		"status": "ok",
+		"status":  "ok",
 		"service": "rate-limiter-service",
 	})
 }
-

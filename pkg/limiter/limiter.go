@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/yourusername/rate-limiter-service/pkg/storage"
+	"github.com/tsvetkovpa93tech/rate-limiter-service/pkg/storage"
 )
 
 // Limiter defines the interface for rate limiting algorithms
@@ -26,4 +26,3 @@ func NewLimiter(algorithm string, storage storage.Storage, limit int, window tim
 		return nil, fmt.Errorf("unsupported algorithm: %s", algorithm)
 	}
 }
-

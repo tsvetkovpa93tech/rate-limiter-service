@@ -1,4 +1,4 @@
-module github.com/yourusername/rate-limiter-service
+module github.com/tsvetkovpa93tech/rate-limiter-service
 
 go 1.21
 
